@@ -88,9 +88,9 @@ chat.style.overflow = "hidden";
 
 document.body.appendChild(chat);
 
-// src="https://open-bot-client-thealphamerc.vercel.app/assistent/${scriptTag.id}"
+// src="http://localhost:3000/assistent/${scriptTag.id}"
 chat.innerHTML = `<iframe
-src="http://localhost:3000/assistent/${scriptTag.id}"
+src="https://open-bot-client-thealphamerc.vercel.app/assistent/${scriptTag.id}"
 width="100%"
 height="100%"
 frameborder="0"
