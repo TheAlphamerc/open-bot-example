@@ -1,7 +1,9 @@
+const scriptTag = document.currentScript;
+const brandColor = scriptTag.getAttribute("brandColor");
+
 const CHAT_BUTTON_SIZE = 50; // size of the chat button in pixels
 const CHAT_BUTTON_RADIUS = CHAT_BUTTON_SIZE / 2; // radius of the chat button in pixels
-const CHAT_BUTTON_BACKGROUND_COLOR = "#0445fe"; // background color of the chat button
-const scriptTag = document.currentScript;
+const OPEN_BOT_BRAND_COLOR = brandColor ?? "#0445fe";
 const CHAT_BUTTON_ICON = `
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#FFFFFF" width="24" height="24">
 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
@@ -17,6 +19,7 @@ const CHAT_BUTTON_CLOSE_ICON = `
 
 // create the chat button element
 const chatButton = document.createElement("div");
+const bubbleVisibility = scriptTag.getAttribute("bubbleVisibility");
 
 // apply styles to the chat button
 chatButton.setAttribute("id", "openchat-bubble-button");
@@ -26,7 +29,7 @@ chatButton.style.right = "20px";
 chatButton.style.width = CHAT_BUTTON_SIZE + "px";
 chatButton.style.height = CHAT_BUTTON_SIZE + "px";
 chatButton.style.borderRadius = CHAT_BUTTON_RADIUS + "px";
-chatButton.style.backgroundColor = CHAT_BUTTON_BACKGROUND_COLOR;
+chatButton.style.backgroundColor = OPEN_BOT_BRAND_COLOR;
 chatButton.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2)";
 chatButton.style.cursor = "pointer";
 chatButton.style.zIndex = 999999999;
@@ -38,6 +41,26 @@ chatButton.addEventListener("mouseenter", (event) => {
 chatButton.addEventListener("mouseleave", (event) => {
   chatButton.style.transform = "scale(1)";
 });
+
+// Hide the chat button if the bubbleVisibility is set to hidden
+if (bubbleVisibility === "hidden") {
+  chatButton.style.scale = "0%";
+}
+
+/**
+ * Open or close the chat button
+ */
+function openBotBubble(state) {
+  if (state === "open") {
+    chatButton.style.scale = "100%";
+    chatButton.style.transition = "all .2s ease-in-out";
+  } else if (state === "close") {
+    chatButton.style.scale = "0%";
+    chatButton.style.transition = "all .2s ease-in-out";
+    // close the chat window if it is open
+    chat.style.display = "none";
+  }
+}
 
 // create the chat button icon element
 const chatButtonIcon = document.createElement("div");
@@ -90,11 +113,12 @@ document.body.appendChild(chat);
 
 // src="http://localhost:3000/assistent/${scriptTag.id}"
 chat.innerHTML = `<iframe
-src="https://open-bot-client-thealphamerc.vercel.app/assistent/${scriptTag.id}"
-width="100%"
-height="100%"
-frameborder="0"
-></iframe>`;
+    id="chatIframe"
+    src="https://open-bot-client-thealphamerc.vercel.app/assistent/${scriptTag.id}"
+    width="100%"
+    height="100%"
+    frameborder="0">
+  </iframe>`;
 
 // Create a condition that targets viewports at least 768px wide
 const mediaQuery = window.matchMedia("(min-width: 550px)");
